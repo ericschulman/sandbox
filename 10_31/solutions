@@ -1,0 +1,8 @@
+#monopoly constrained
+max{p (1 - p) + p (1 - p) p} = 2/(3 sqrt(3)) at p = 1/sqrt(3) = 0.577
+
+#monopoly unconstrained
+max{p (1 - p) + q (1 - q) p} = 25/64 at (p, q) = (5/8, 1/2)
+
+#limit pricing
+max{p (1 - p) + 0.5 (1 + q) q (1 - q)}≈0.44245 at (p, q) = (0.5, 0.57735)
