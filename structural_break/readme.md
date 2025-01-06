@@ -1,7 +1,14 @@
+# em-2007-structural-break
+
+This contains my rough understanding of the test in [Elliot and Muller 2007](https://www.princeton.edu/~umueller/confintP.pdf). It's supposed to be implementing the test in proposition 2.
+   - The testing process systematically loops over all potential break points.
+   - Instead of approximating using a normal distribution, the critical values are rooted in rigorous theoretical results concerning squared integrals of Brownian bridges.
+   - By ordering integral values obtained from the simulated paths, the code estimates critical values critical for conducting hypothesis tests regarding structural break analysis.
+
 # structural-break-3-akm
 
 
-This file tests for a structural break based on the concepts presented in [Andrews et al. 2020](https://economics.mit.edu/sites/default/files/2023-06/normmaxpaper.pdf). The specific challenge addressed testing for size of structural break, when the break date is unknown.
+This file tests for a structural break based on the concepts presented in [Andrews et al. 2021](https://economics.mit.edu/sites/default/files/2023-06/normmaxpaper.pdf). The specific challenge addressed testing for size of structural break, when the break date is unknown.
 
 * I For $X_n$ I used F-statistic for a structural braek.
 * Then $Y_n$ is and $\delta$ the magnitude of the break.
@@ -53,3 +60,4 @@ $$ K(\tilde{\theta}, \theta) = \frac{-B(\tilde{\theta}, \theta) + \sqrt{D}}{2A(\
 
 Where $ D $ is the discriminant given by $ D = B(\tilde{\theta}, \theta)^2 - 4A(\tilde{\theta}, \theta)C(\tilde{\theta}, \theta) $. Using the calculated $G(\tilde{\theta}, \theta)  $ and $ K(\tilde{\theta}, \theta) $, identify the interval over $ Y(\tilde{\theta}) $ that satisfies all conditions.
 
+TODO: Maybe need to implement constraints related to $A(\tilde{\theta}, \theta)= 0$ and boundary determined by $H(\tilde{\theta}, \theta)$.

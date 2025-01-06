@@ -1,0 +1,110 @@
+#1 geenrate the data...
+
+def generate_data(n, break_point, alpha0, alpha1, alpha2, beta0, gamma0):
+    index = np.arange(n).reshape(-1, 1)  # Reshaping for compatibility in column stacking
+    c2 = np.random.normal(size=n)
+    e = np.random.normal(size=n)
+    
+    # Common random variable to introduce correlation
+    u1 = np.random.normal(0, 0.5, size=n)  # Shared random factor for correlation
+    
+    # Treatment and outcome relationships
+    d1 = beta0 * (index > break_point).astype(float).reshape(-1) + u1 + np.random.normal(scale=1, size=n)
+    d2 = gamma0 * (index > (break_point + n * 0.4)).astype(float).reshape(-1) + u1 + np.random.normal(scale=1, size=n)
+    controls = np.random.normal(scale=2, size=(n, 5)) + u1[:, np.newaxis]  # d3 to d10 with added shared variation
+    
+    # Outcome variable should be a 1D array
+    c1 = alpha0 + alpha1 * c2 + alpha2 * d1 + e  # Ensure this is 1D
+
+    # Ensure data is combined correctly into a 2D array structure, featuring index for reference
+    #data = np.column_stack((index, c2, d1, d2, controls))
+    data = np.column_stack((index, c2,  controls))
+    
+    return c1, data
+
+def compute_delta(c1, data, theta):
+    index = data[:, 0]
+    c2 = data[:, 1]
+    dj = data[:, theta]
+    
+    # Regression model with c2 * (index > theta) and interaction with dj
+    X = sm.add_constant(np.column_stack((c2, c2 * (index >= index[theta]), dj)))
+    model = np.linalg.lstsq(X, c1, rcond=None)
+    coeffs = model[0]
+    delta = coeffs[2]  # Get the coefficient for the interaction term (c2 * (index >= theta))... adjust if necessary...
+    
+    return -1*np.abs(delta), delta
+
+
+#2 order the indexes j by the magnitude size of delta... (note true delta is 0)
+# e.g., Get the coefficient for the interaction term (c2 * (index >= theta))
+then rank them all in terms of absulte value
+print the results of this step... 
+
+
+#3 calculate log likelhiood for each delta...
+class OLS_loglike(GenericLikelihoodModel):
+    
+    def __init__(self, *args,ols=False, **kwargs):
+        super(OLS_loglike,self).__init__(*args,**kwargs)
+        self.ols = ols
+
+    def loglikeobs(self, params):
+        y = self.endog
+        x = self.exog
+        mu_y = np.matmul(x,params)  
+        resid = y - mu_y
+        sigma = np.sqrt(np.sum(resid**2)/resid.shape[0])
+        pr_y = stats.norm.logpdf( resid, loc=0,scale=sigma )
+        return pr_y
+
+========================================================================================================================
+0 ) set n = 250
+true_break_point = int(n*.5)
+
+
+#let's try to calculat ethe LFd... 
+a start by taking draws from "base" distribitions...
+
+essentially, simulate delta and the indexes... integrate the LL over those indexes... take an initial draw from each of these distributions...
+--- δ is an equal probability mixture of δ ∼ N (µδ , σ 2 δ ) and δ ∼ N (−µδ , σ 2 δ )’’ for some integers... set sigma 1 and mu = 2?
+--- pair each of theese 2 distr for delta with covariates we want to pick.... its relaization should correspond to an integer index...   do 100 draws of delta... from each of these 8 cj j>2)
+--- for each of the covariatesestimate the parmeters != delta (e.g., coefficient on c2 cj and the intercept... alpha0 and alpha1 hat in model below... but not delta...)
+-- take random bootstrap draws over the index, c2, and c3....
+--- calculate... c1 =alpha0+ alpha1_hat c2 + alpha2 cj + delta*c2*(time > cutoff) + e~N(0,1)
+the use these to calculate a c1_bootsrap in conjuction with teh new parameters...
+
+
+numerator is LL using delta =0 and using index of min delta... from stage 2... set other paremters equal to their values in simualtion process alpha1_hat c2 + alpha2 cj + delta
+denomintaor is LL using all deltas, and all indexes drawn from sub compments of the lfds.... 
+# like this should result in 8 rejection rpobabilities...
+
+the end results should be a distr of likelihood ratio statistics (250 (draws) *100 (parameter draws) lr statistisc at teh obs leve)... for 8 seperate distribtions....
+return this as an (8x25000) array....
+
+
+========================================================================================================================
+
+#4 here is how you calculate LFD: i have distributions for 8 likelihood statistics... from samples with 100 (parameters) * 250 (number of samples) observations... 
+
+for each of these draws...
+calcualte rejection probablilities...
+
+trying to ensure that teh test rejects the null for all the different fj < alpha... (parametric likelhiood so we can do that)
+also, ensure the test has lowest possible criitcal values...
+mu_j  are ciritcal vlaues for each test...
+alternatie between compute mu(i) and lambda(i) where 
+
+
+a) mu(i) is a critical values... leading to rejection rpobabilities... 
+\( \mu_i = \ln(cv_\Lambda \lambda_i) \)... 
+
+
+
+b) and lmabda(i) is a weight which is calculated using the rejection probabilities from (a)
+μ(i+1)_j = μ(i)_j + \omega \left(\int \phi_{μ(i)} f_j \, d\nu - \alpha\right) \) (10) for \( i = 1\ldots O \). 
+lambda ∗ *i j = exp(μ(O) j )/ M k=1 exp(μ(O) k ).
+An iteration of (10) increases the weights \( \exp(μ_j) \) on those \( f_j \) that lead to overrejections relative to \( \alpha \), and decreases the weights \( \exp(\mu_j) \) for those that lead to an underrejection.'
+
+
+
