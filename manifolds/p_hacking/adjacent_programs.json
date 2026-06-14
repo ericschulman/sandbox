@@ -1,0 +1,85 @@
+{
+  "programs": [
+    {
+      "program_id": "baseline",
+      "rationale": "Baseline: log mortality rate per 100k + 1, state×year, pseudo post=2011",
+      "data_ops": {
+        "filter_query": null,
+        "outcome_transform": "log_rate",
+        "aggregate": null
+      },
+      "design_ops": {
+        "last_year": 2011,
+        "pre_years": 5,
+        "post_years": 3,
+        "n_treated": 23,
+        "n_sim": 500,
+        "effect_grid_step": 0.0025,
+        "effect_grid_end": 0.05
+      }
+    },
+    {
+      "program_id": "longer_pre_period",
+      "rationale": "Longer pre-period (12 years) to improve baseline trend estimation, same post period and treatment size",
+      "data_ops": {
+        "filter_query": null,
+        "outcome_transform": "log_rate",
+        "aggregate": null
+      },
+      "design_ops": {
+        "last_year": 2011,
+        "pre_years": 12,
+        "post_years": 3,
+        "n_treated": 23,
+        "n_sim": 500,
+        "effect_grid_step": 0.0025,
+        "effect_grid_end": 0.05
+      }
+    },
+    {
+      "program_id": "smaller_treated_group",
+      "rationale": "Smaller treated group (5 states) to reduce power, same baseline and post periods",
+      "data_ops": {
+        "filter_query": null,
+        "outcome_transform": "log_rate",
+        "aggregate": null
+      },
+      "design_ops": {
+        "last_year": 2011,
+        "pre_years": 5,
+        "post_years": 3,
+        "n_treated": 5,
+        "n_sim": 500,
+        "effect_grid_step": 0.0025,
+        "effect_grid_end": 0.05
+      }
+    },
+    {
+      "program_id": "aggregate_data_asinh",
+      "rationale": "Aggregate deaths and population by state and year, use asinh transform to reduce influence of outliers, shorter post period and fewer simulations to reduce power",
+      "data_ops": {
+        "filter_query": null,
+        "outcome_transform": "asinh_rate",
+        "aggregate": {
+          "groupby": [
+            "state_id",
+            "year"
+          ],
+          "sum": [
+            "deaths",
+            "population"
+          ]
+        }
+      },
+      "design_ops": {
+        "last_year": 2012,
+        "pre_years": 3,
+        "post_years": 1,
+        "n_treated": 23,
+        "n_sim": 100,
+        "effect_grid_step": 0.005,
+        "effect_grid_end": 0.04
+      }
+    }
+  ]
+}

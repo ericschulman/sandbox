@@ -1,0 +1,44 @@
+{
+  "programs": [
+    {
+      "bridge_id": "direct_dilution",
+      "beta_frac_from_deltaB": "kappa * deltaB / (c * N_pop)",
+      "beta_frac_from_deltaN": "kappa * deltaN / N_pop",
+      "parameters": [
+        {
+          "name": "c",
+          "unit": "dollars/person-year",
+          "description": "Cost per incremental enrollee per year",
+          "default": null
+        },
+        {
+          "name": "kappa",
+          "unit": "unitless",
+          "description": "Health-channel parameter representing mortality effect per enrollee",
+          "default": null
+        }
+      ],
+      "comments": "This program uses the accounting identity deltaN = deltaB / c to express beta from deltaB, then applies a dilution mapping beta = (deltaN/N_pop) * kappa to relate incremental enrollment to mortality effect."
+    },
+    {
+      "bridge_id": "enrollment_first",
+      "beta_frac_from_deltaB": "kappa * (deltaB / c) / N_pop",
+      "beta_frac_from_deltaN": "kappa * deltaN / N_pop",
+      "parameters": [
+        {
+          "name": "c",
+          "unit": "dollars/person-year",
+          "description": "Cost per incremental enrollee per year",
+          "default": null
+        },
+        {
+          "name": "kappa",
+          "unit": "unitless",
+          "description": "Health-channel parameter representing mortality effect per enrollee",
+          "default": null
+        }
+      ],
+      "comments": "This program explicitly converts incremental federal outlays to enrollment using deltaN = deltaB / c, then applies the mortality effect proportionally to the analysis population."
+    }
+  ]
+}

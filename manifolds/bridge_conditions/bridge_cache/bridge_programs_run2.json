@@ -1,0 +1,44 @@
+{
+  "programs": [
+    {
+      "bridge_id": "direct_dilution",
+      "beta_frac_from_deltaB": "(kappa * deltaB) / (c * N_pop)",
+      "beta_frac_from_deltaN": "(kappa * deltaN) / N_pop",
+      "parameters": [
+        {
+          "name": "c",
+          "unit": "dollars/person-year",
+          "description": "Cost per incremental enrollee per year",
+          "default": null
+        },
+        {
+          "name": "kappa",
+          "unit": "unitless",
+          "description": "Health-channel parameter mapping enrollment changes to mortality fraction changes",
+          "default": null
+        }
+      ],
+      "comments": "Uses the accounting identity deltaN = deltaB / c to express beta as proportional mortality effect from either spending or enrollment, scaled by kappa."
+    },
+    {
+      "bridge_id": "enrollment_first",
+      "beta_frac_from_deltaB": "(kappa / N_pop) * (deltaB / c)",
+      "beta_frac_from_deltaN": "(kappa * deltaN) / N_pop",
+      "parameters": [
+        {
+          "name": "c",
+          "unit": "dollars/person-year",
+          "description": "Average dollars spent per incremental enrollee per year",
+          "default": null
+        },
+        {
+          "name": "kappa",
+          "unit": "unitless",
+          "description": "Unitless parameter capturing mortality effect per incremental enrollee",
+          "default": null
+        }
+      ],
+      "comments": "Explicitly uses deltaN = deltaB / c to convert spending to enrollment before applying mortality effect parameter kappa."
+    }
+  ]
+}
