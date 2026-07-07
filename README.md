@@ -1,2 +1,2 @@
-# info_theory
+# sandbox
 various excersizes involving info theory and economics
